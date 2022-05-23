@@ -23,7 +23,7 @@ class realm:
 
 
 def read_from_json(json_path: str):
-    with open(json_path, "r") as json_file:
+    with open(json_path.replace(" ", "_"), "r") as json_file:
         data = json.load(json_file)
     json_file.close()
     return data
@@ -37,13 +37,26 @@ def create_realm(realm_name: str, difficulty: int):
             r = realm(realm_name, difficulty).toJSON()
             json_settings = json.dumps(r)
 
-            with open(global_game_path + "/" + realm_name + ".json", "w") as jsonfile:
+            wn_fixed = global_game_path + "/" + realm_name + ".json"
+            wn_fixed = str(wn_fixed).replace(" ", "_")
+            with open(wn_fixed, "w") as jsonfile:
                 jsonfile.write(json_settings)
             jsonfile.close()
 
 
-def create_character():
-    pass
+def create_character(character_name: str, difficulty: int):
+    if difficulty > 10 or difficulty < 0:
+        print("Please enter a valid difficulty level.")
+    else:
+        if not os.path.exists(global_character_path + "/GAME.json"):
+            r = realm(character_name, difficulty).toJSON()
+            json_settings = json.dumps(r)
+
+            wn_fixed = global_character_path + "/" + character_name + ".json"
+            wn_fixed = str(wn_fixed).replace(" ", "_")
+            with open(wn_fixed, "w") as jsonfile:
+                jsonfile.write(json_settings)
+            jsonfile.close()
 
 
 def list_characters():
@@ -56,7 +69,7 @@ def delete_character():
 
 def main():
     while True:
-        answ = input("What would you like to do? [ Create Realm[CR], List All Realms[L] ]")
+        answ = input("What would you like to do? [ Create Realm[CR], List All Realms[L], Exit[E,Q] ]: ")
 
         # Create New Realm
         if answ.lower() == "cr":
@@ -66,8 +79,16 @@ def main():
             create_realm(realm_name, int(realm_difficulty))
             print(read_from_json(global_game_path + "/" + realm_name + ".json"))
 
+        # Create New Character
+        elif answ.lower() == "cc":
+            char_name = input("Name of new character: ")
+            char_age = input("Age of character(int): ")
+            char_race = input("Race of character(elf, dragonborn, human etc.): ")
+            char_height = input("Height of character(cm): ")
+            create_character()
+
         # List All Realms
-        if answ.lower() == "l":
+        elif answ.lower() == "l":
             files = os.listdir("./game")
             i = 0
             print("---------------------------------")
@@ -76,6 +97,10 @@ def main():
                 i += 1
             print("\n---------------------------------")
             print("\n")
+
+        # Terminate Program
+        elif answ.lower() == "e" or answ.lower() == "q":
+            exit(0)
 
 
 if __name__ == '__main__':
