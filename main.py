@@ -1,5 +1,6 @@
 import json
 import os
+import glob
 
 global_character_path = "./characters"
 global_game_path = "./game"
@@ -9,6 +10,21 @@ if not os.path.exists(global_character_path):
 
 if not os.path.exists(global_game_path):
     os.makedirs(global_game_path)
+
+character_list = []
+realm_list = []
+
+# print(glob.glob(global_character_path+"/*"))
+for file in glob.glob(global_character_path + "/*"):
+    character_list.append(file)
+
+
+def print_with_index(list_to_print: list):
+    for char in range(len(list_to_print)):
+        print(char, list_to_print[char])
+
+
+print_with_index(character_list)
 
 
 class realm:
@@ -68,6 +84,8 @@ def create_character(character_name: str, age: int, race: str, height: int, prof
             wn_fixed = str(wn_fixed).replace(" ", "_")
             with open(wn_fixed, "w") as jsonfile:
                 jsonfile.write(json_settings)
+            # character_list.append(wn_fixed)
+
             jsonfile.close()
 
 
@@ -107,11 +125,48 @@ def delete_character(character_name: str):
 
 def main():
     while True:
-        answ = input("What would you like to do? [ Create Realm[CR], List All Realms[LR], List All Characters[LC], "
-                     ", Delete Character[DC], Exit[E,Q] ]: ")
+        # answ = input("What would you like to do? [ Create Realm[CR], List All Realms[LR], List Realm Information[LR + "
+        #             "´Realm Name´] , Create Character[CC], List All Characters[LC], List Char Information[LC + "
+        #             "´Character Name´] "
+        #             ", Delete Character[DC], Exit[E,Q] ]: ")
+
+        answ = input("\n ------------------- "
+                     "\n  - Realms -"
+                     "\n[cr] - Create a new realm"
+                     "\n[lr] - List all realms"
+                     "\n[lr + ´realm_name´] - List Specific Realm Information"
+                     "\n[dr] - Delete Realm"
+                     "\n ------------------- "
+                     "\n  - Characters -"
+                     "\n[cc] - Create a new character"
+                     "\n[lc] - List all characters"
+                     "\n[lc + ´character_name´] - List Specific Character Information"
+                     "\n[dc] - Delete character"
+                     "\n ------------------- "
+                     "\n  - Misc -"
+                     "\n[h] - This Help Message"
+                     "\n: ")
+
+        if answ.lower() == "h" or answ.lower() == "help":
+            print("\n ------------------- "
+                  "\n  - Realms -"
+                  "\n[cr] - Create a new realm"
+                  "\n[lr] - List all realms"
+                  "\n[lr + ´realm_name´] - List Specific Realm Information"
+                  "\n[dr] - Delete Realm"
+                  "\n ------------------- "
+                  "\n  - Characters -"
+                  "\n[cc] - Create a new character"
+                  "\n[lc] - List all characters"
+                  "\n[lc + ´character_name´] - List Specific Character Information"
+                  "\n[dc] - Delete character"
+                  "\n ------------------- "
+                  "\n  - Misc -"
+                  "\n[h] - This Help Message"
+                  "\n: ")
 
         # Create New Realm
-        if answ.lower() == "cr":
+        elif answ.lower() == "cr":
             realm_name = input("Name of new realm: ")
             realm_difficulty = input("Difficulty of " + '"' + realm_name + '"' + "[1-10].: ")
 
@@ -134,16 +189,24 @@ def main():
         # List All Characters
         elif answ.lower() == "lc":
             list_dir("characters", True)
-            # list_char = input()
-            # if list_char.__contains__(" "):
-            #    list_char = list_char.replace("lc ", "")
-            #    list_dir(list_char, True)
-            # else:
-            #    pass
 
+        # List Specific Character Information
+        elif answ.lower().__contains__("lc") and answ.lower().__contains__(" "):
+            answ = answ.replace("lc", "")
+            answ = answ.replace(" ", "")
+            print(read_from_json(global_character_path + "/" + answ + ".json"))
+
+        # List Specific Realm Information
+        elif answ.lower().__contains__("lr") and answ.lower().__contains__(" "):
+            answ = answ.replace("lr", "")
+            answ = answ.replace(" ", "")
+            print(read_from_json(global_game_path + "/" + answ + ".json"))
+
+        # Delete Character
         elif answ.lower() == "dc":
-            list_dir("characters", False)
-            char_to_delete = input("What character would you like to delete?(Type the full name) ")
+            list_dir(dir_to_list="characters", num=False)
+            char_to_delete = input("What character would you like to delete?(Type the full name ´Upper Lowercase "
+                                   "Sensitive´) ")
             delete_character(char_to_delete)
 
         # Terminate Program

@@ -1,2 +1,7 @@
 
 *.json
+.idea/discord.xml
+.idea/inspectionProfiles/profiles_settings.xml
+*.xml
+*.iml
+.idea/.name
