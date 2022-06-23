@@ -27,6 +27,15 @@ def print_with_index(list_to_print: list):
 print_with_index(character_list)
 
 
+class singular_json_print:
+    def __init__(self, json_print):
+        self.json_print = json_print
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
+
 class realm:
     def __init__(self, name, difficulty):
         self.name = name
@@ -56,6 +65,18 @@ def read_from_json(json_path: str):
     json_file.close()
     return data
 
+
+def add_to_prev_json(json_path: str, input_to_file: str):
+    with open(json_path.replace(" ", "_"), "w+") as json_file:
+        input_to_file = singular_json_print(input_to_file).toJSON()
+        w = json.dumps(input_to_file)
+        json_file.write(w)
+
+
+# temp = input("Test: ")
+# add_to_prev_json("test.json", temp)
+
+# print(read_from_json("test.json"))
 
 def create_realm(realm_name: str, difficulty: int):
     if difficulty > 10 or difficulty < 0:
